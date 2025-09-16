@@ -1,0 +1,68 @@
+<!-- Login/Register Form with Tab Navigation -->
+<div
+  id="auth-container"
+  class="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow"
+>
+  <div class="flex justify-center mb-6">
+    <button
+      id="tab-login"
+      class="px-4 py-2 font-semibold text-gray-700 border-b-2 border-primary-500"
+    >
+      Login
+    </button>
+    <button
+      id="tab-register"
+      class="px-4 py-2 font-semibold text-gray-500 border-b-2 border-transparent"
+    >
+      Register
+    </button>
+  </div>
+  <form id="login-form" class="block">
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Username</label>
+      <input type="text" name="username" class="form-input" required />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Password</label>
+      <input type="password" name="password" class="form-input" required />
+    </div>
+    <button type="submit" class="btn-primary">Login</button>
+  </form>
+  <form id="register-form" class="hidden">
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Username</label>
+      <input type="text" name="username" class="form-input" required />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Password</label>
+      <input type="password" name="password" class="form-input" required />
+    </div>
+    <div class="mb-4">
+      <label class="block text-sm font-medium mb-1">Phone Number</label>
+      <input type="text" name="phone" class="form-input" required />
+    </div>
+    <button type="submit" class="btn-primary">Register</button>
+  </form>
+</div>
+<script>
+  // Tab navigation logic
+  const tabLogin = document.getElementById("tab-login");
+  const tabRegister = document.getElementById("tab-register");
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+
+  tabLogin.onclick = function () {
+    tabLogin.classList.add("text-gray-700", "border-primary-500");
+    tabRegister.classList.remove("text-gray-700", "border-primary-500");
+    tabRegister.classList.add("text-gray-500", "border-transparent");
+    loginForm.classList.remove("hidden");
+    registerForm.classList.add("hidden");
+  };
+  tabRegister.onclick = function () {
+    tabRegister.classList.add("text-gray-700", "border-primary-500");
+    tabLogin.classList.remove("text-gray-700", "border-primary-500");
+    tabLogin.classList.add("text-gray-500", "border-transparent");
+    registerForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+  };
+</script>
