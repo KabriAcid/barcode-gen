@@ -16,7 +16,17 @@ class BarcodeGenerator {
     if (generateBtn) {
       generateBtn.addEventListener("click", async () => {
         generateBtn.disabled = true;
-        generateBtn.innerHTML = `<svg class='animate-spin h-5 w-5 mr-2 inline-block text-white' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'><circle class='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' stroke-width='4'></circle><path class='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z'></path></svg> Generating...`;
+        generateBtn.innerHTML = `<span class='inline-block w-5 h-5 mr-2 align-middle rounded-full border-2 border-primary-500 border-t-transparent animate-spin-custom'></span> Generating...`;
+        // Custom spinner animation via CSS
+        if (!document.getElementById("custom-spinner-style")) {
+          const style = document.createElement("style");
+          style.id = "custom-spinner-style";
+          style.innerHTML = `
+            @keyframes spin-custom { to { transform: rotate(360deg); } }
+            .animate-spin-custom { animation: spin-custom 0.8s linear infinite; border-width: 2px; border-style: solid; border-radius: 9999px; }
+          `;
+          document.head.appendChild(style);
+        }
         await new Promise((r) => setTimeout(r, 2000));
         const upc = this.generateUPC();
         const name = nameInput.value.trim();
