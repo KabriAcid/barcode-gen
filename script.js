@@ -357,33 +357,26 @@ class BarcodeGenerator {
         const barcodeImage = tempCanvas.toDataURL();
 
         return `
-          <div class="p-4 border-b border-gray-200">
-            <div class="flex items-center gap-4">
-              <img src="${barcodeImage}" alt="Barcode" class="h-16 w-auto" />
-              <div class="flex flex-col flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="font-mono text-base md:text-lg font-semibold break-all text-gray-800">${
-                    item.value
-                  }</span>
-                  ${
-                    item.name
-                      ? `<span class="text-sm font-semibold text-primary-500">${item.name}</span>`
-                      : ""
-                  }
-                </div>
-                <div class="text-xs md:text-sm text-gray-500">${
-                  item.type
-                } <span class="mx-1">•</span> ${
+          <div class="p-4 border-b border-gray-200 bg-gray-50 rounded-xl">
+            <img src="${barcodeImage}" alt="Barcode" class="h-16 w-auto mx-auto mb-2" />
+            <div class="font-mono text-base md:text-lg font-semibold break-all text-gray-800 text-center">${
+              item.value
+            }${
+          item.name
+            ? ` <span class='text-sm font-semibold text-primary-500'>${item.name}</span>`
+            : ""
+        }</div>
+            <div class="text-xs md:text-sm text-gray-500 text-center mt-1">${
+              item.type
+            } <span class="mx-1">•</span> ${
           item.labelSize
         } <span class="mx-1">•</span> ${item.copies} copies</div>
-                <div class="text-xs text-gray-400">${new Date(
-                  item.timestamp
-                ).toLocaleDateString()}</div>
-              </div>
-              <button onclick="app.reprintBarcode(${
-                item.id
-              })" class="btn-secondary text-xs md:text-sm px-3 py-2 ml-2">Reprint</button>
-            </div>
+            <div class="text-xs text-gray-400 text-center mb-2">${new Date(
+              item.timestamp
+            ).toLocaleDateString()}</div>
+            <button onclick="app.reprintBarcode(${
+              item.id
+            })" class="btn-secondary text-xs md:text-sm px-3 py-2 w-full my-3 mb-5">Reprint</button>
           </div>
         `;
       })
