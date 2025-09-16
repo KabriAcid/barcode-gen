@@ -305,35 +305,58 @@ class BarcodeGenerator {
   updateHistoryDisplay() {
     const historyList = document.getElementById("history-list");
     const emptyHistory = document.getElementById("empty-history");
+
     if (this.history.length === 0) {
       historyList.classList.add("hidden");
       emptyHistory.classList.remove("hidden");
       return;
     }
+
     historyList.classList.remove("hidden");
     emptyHistory.classList.add("hidden");
+
     historyList.innerHTML = this.history
-      .map(
-        (item) => `
-      <div class="barcode-item p-4">
-        <div class="flex flex-col gap-1">
-          <div class="font-mono text-base md:text-lg font-semibold break-all">${
-            item.value
-          }</div>
-          <div class="text-xs md:text-sm text-gray-500">${item.type} • ${
-          item.labelSize
-        } • ${item.copies} copies</div>
-          <div class="text-xs text-gray-400">${new Date(
-            item.timestamp
-          ).toLocaleDateString()}</div>
+      .map((item) => {
+        // Generate a temporary canvas for rendering barcode image
+        const tempCanvas = document.createElement("canvas");
+        try {
+          JsBarcode(tempCanvas, item.value, {
+            format: item.type,
+            width: 2,
+            height: 80,
+            displayValue: false, // we’ll show value separately
+            margin: 0,
+          });
+        } catch (e) {
+          console.error("Error generating history barcode:", e);
+        }
+
+        const barcodeImage = tempCanvas.toDataURL();
+
+        return `
+        <div class="barcode-item p-4 border-b border-gray-200">
+         <div class="flex justify-between items-start">
+          <div class="flex flex-col items-center">
+                    <!-- Barcode Image -->
+          <img src="${barcodeImage}" alt="Barcode" class="mb-2" />
+
+          <!-- Value beneath -->
+          <div class="font-mono text-sm md:text-base mb-2">${item.value}</div>
         </div>
-        <button onclick="app.reprintBarcode(${
-          item.id
-        })" class="btn-secondary text-xs md:text-sm px-3 md:px-4 py-2 w-full mt-3">Reprint</button>
-        <hr class="mt-4 border-gray-200" />
-      </div>
-    `
-      )
+
+          <!-- Reprint button beside -->
+          <div class="flex justify-center">
+            <button 
+              onclick="app.reprintBarcode(${item.id})" 
+              class="btn-secondary text-xs md:text-sm px-3 py-1"
+            >
+              Reprint
+            </button>
+          </div>
+         </div>
+        </div>
+      `;
+      })
       .join("");
   }
 
