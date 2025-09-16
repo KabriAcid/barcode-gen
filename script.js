@@ -246,6 +246,31 @@ class BarcodeGenerator {
     this.updateHistoryDisplay();
   }
 
+  // Allow user to download history as JSON file
+  exportHistory() {
+    if (!this.history.length) return;
+    const blob = new Blob(
+      [
+        JSON.stringify(
+          this.history.map((h) => ({ ...h })),
+          null,
+          2
+        ),
+      ],
+      { type: "application/json" }
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `barcode-history-${new Date()
+      .toISOString()
+      .slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
   updateHistoryDisplay() {
     const historyList = document.getElementById("history-list");
     const emptyHistory = document.getElementById("empty-history");
