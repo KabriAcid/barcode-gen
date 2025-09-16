@@ -12,7 +12,7 @@
         <h1 class="text-2xl font-bold text-gray-800">Barcode Generator</h1>
       </header>
       <div id="auth-container" class="step-card mt-4">
-        <div class="flex justify-center mb-16 gap-0">
+        <div class="flex justify-center mb-8 gap-0">
           <button
             id="tab-login"
             class="w-1/2 px-4 py-2 font-semibold border-b-2 border-primary-500 btn-secondary tab-header transition-all duration-300"
@@ -26,6 +26,7 @@
             Register
           </button>
         </div>
+        <div id="feedback-msg" class="text-center text-sm my-4"></div>
         <form id="login-form" class="block transition-all duration-300">
           <div class="mb-6">
             <label class="block text-sm font-medium mb-3">Username</label>
@@ -111,20 +112,27 @@
           "bg-gray-100",
           "text-gray-700"
         );
+        // Switch body content as well
+        if (tab === tabLogin) {
+          loginForm.classList.remove("hidden");
+          registerForm.classList.add("hidden");
+        } else {
+          registerForm.classList.remove("hidden");
+          loginForm.classList.add("hidden");
+        }
       }
 
       tabLogin.onclick = function () {
         setActiveTab(tabLogin);
-        loginForm.classList.remove("hidden");
-        registerForm.classList.add("hidden");
       };
       tabRegister.onclick = function () {
         setActiveTab(tabRegister);
-        registerForm.classList.remove("hidden");
-        loginForm.classList.add("hidden");
       };
       // Set initial active tab
       setActiveTab(tabLogin);
+
+      // Feedback message element
+      const feedbackMsg = document.getElementById("feedback-msg");
 
       // --- Register AJAX ---
       registerForm.addEventListener("submit", async function (e) {
@@ -141,13 +149,22 @@
           const data = await res.json();
           if (data.success) {
             localStorage.setItem("userId", data.userId);
-            alert("Registration successful! You are now logged in.");
-            // Redirect or show barcode generator UI here
+            feedbackMsg.textContent =
+              "Registration successful! You can now log in.";
+            feedbackMsg.className = "text-center text-sm my-6 text-green-600";
+            setActiveTab(tabLogin);
+            registerForm.reset();
+            setTimeout(() => {
+              feedbackMsg.textContent = "";
+              feedbackMsg.className = "text-center text-sm my-4";
+            }, 3000);
           } else {
-            alert(data.error || "Registration failed.");
+            feedbackMsg.textContent = data.error || "Registration failed.";
+            feedbackMsg.className = "text-center text-sm my-6 text-red-500";
           }
         } catch (err) {
-          alert("Registration error. Please try again.");
+          feedbackMsg.textContent = "Registration error. Please try again.";
+          feedbackMsg.className = "text-center text-sm my-6 text-red-500";
         }
       });
 
@@ -165,13 +182,18 @@
           const data = await res.json();
           if (data.success) {
             localStorage.setItem("userId", data.userId);
-            alert("Login successful!");
-            // Redirect or show barcode generator UI here
+            feedbackMsg.textContent = "Login successful! Redirecting...";
+            feedbackMsg.className = "text-center text-sm my-6 text-green-600";
+            setTimeout(() => {
+              window.location.href = "generate.html";
+            }, 1200);
           } else {
-            alert(data.error || "Login failed.");
+            feedbackMsg.textContent = data.error || "Login failed.";
+            feedbackMsg.className = "text-center text-sm my-6 text-red-500";
           }
         } catch (err) {
-          alert("Login error. Please try again.");
+          feedbackMsg.textContent = "Login error. Please try again.";
+          feedbackMsg.className = "text-center text-sm my-6 text-red-500";
         }
       });
     </script>
