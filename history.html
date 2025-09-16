@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Barcode History</title>
+    <link href="./style.css" rel="stylesheet" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"
+      defer
+    ></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto max-w-2xl py-8">
+      <header class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-gray-800">Barcode History</h1>
+      </header>
+      <div class="mb-6">
+        <input
+          id="history-search"
+          type="text"
+          class="form-input w-full"
+          placeholder="Search by value, name, or label size..."
+        />
+      </div>
+      <div
+        id="history-list"
+        class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+      ></div>
+      <div id="empty-history" class="text-center py-8 text-gray-500 hidden">
+        <p>No barcodes found.</p>
+      </div>
+    </div>
+    <script>
+      // Redirect to login if not logged in
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        window.location.href = "index.html";
+      }
+
+      let history = [];
+      const historyList = document.getElementById("history-list");
+      const emptyHistory = document.getElementById("empty-history");
+      const searchInput = document.getElementById("history-search");
+
+      async function fetchHistory() {
+        try {
+          const res = await fetch(`/api/history?userId=${userId}`);
+          if (!res.ok) throw new Error("Failed to load history");
+          history = await res.json();
+          renderHistory();
+        } catch (e) {
+          history = [];
+          renderHistory();
+        }
+      }
+
+      function renderHistory(filter = "") {
+        const filtered = history.filter((item) => {
+          const q = filter.toLowerCase();
+          return (
+            item.value.toLowerCase().includes(q) ||
+            (item.name && item.name.toLowerCase().includes(q)) ||
+            (item.labelSize && item.labelSize.toLowerCase().includes(q))
+          );
+        });
+        if (filtered.length === 0) {
+          historyList.innerHTML = "";
+          emptyHistory.classList.remove("hidden");
+          return;
+        }
+        emptyHistory.classList.add("hidden");
+        historyList.innerHTML = filtered
+          .map((item) => {
+            // Generate barcode image
+            const tempCanvas = document.createElement("canvas");
+            try {
+              JsBarcode(tempCanvas, item.value, {
+                format: "UPC",
+                width: 2,
+                height: 80,
+                displayValue: false,
+                margin: 0,
+              });
+            } catch (e) {}
+            const barcodeImage = tempCanvas.toDataURL();
+            return `
+          <div class="p-4 bg-white rounded-xl shadow border border-gray-200 flex flex-col items-center">
+            <img src="${barcodeImage}" alt="Barcode" class="h-16 w-auto mb-2" />
+            <div class="font-mono text-base font-semibold text-gray-800 text-center break-all">${
+              item.value
+            }${
+              item.name
+                ? ` <span class='text-sm font-semibold text-primary-500'>${item.name}</span>`
+                : ""
+            }</div>
+            <div class="text-xs text-gray-500 text-center mt-1">${
+              item.labelSize
+            } <span class="mx-1">•</span> ${item.copies} copies</div>
+            <div class="text-xs text-gray-400 text-center mb-2">${new Date(
+              item.timestamp
+            ).toLocaleDateString()}</div>
+            <button class="btn-secondary text-xs px-3 py-2 w-full mt-2" onclick="reprintBarcode('${
+              item.value
+            }')">Reprint</button>
+          </div>
+        `;
+          })
+          .join("");
+      }
+
+      searchInput.addEventListener("input", (e) => {
+        renderHistory(e.target.value);
+      });
+
+      window.reprintBarcode = function (value) {
+        // Open print dialog for the barcode
+        const printWindow = window.open("", "_blank");
+        printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print Barcode</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
+              .barcode-container { margin: 20px 0; page-break-inside: avoid; }
+              .barcode-value { font-family: monospace; margin-top: 10px; font-size: 14px; }
+              @media print { body { margin: 0; } }
+            </style>
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js'><\/script>
+          </head>
+          <body>
+            <div class="barcode-container">
+              <canvas id="barcode-canvas"></canvas>
+              <div class="barcode-value">${value}</div>
+            </div>
+            <script>
+              JsBarcode(document.getElementById('barcode-canvas'), '${value}', { format: 'UPC', width: 2, height: 100, displayValue: true, fontSize: 14, margin: 10 });
+              window.print();
+            <\/script>
+          </body>
+        </html>
+      `);
+        printWindow.document.close();
+        printWindow.focus();
+      };
+
+      fetchHistory();
+    </script>
+  </body>
+</html>

@@ -40,6 +40,12 @@ class BarcodeGenerator {
         this.showGenerator();
       });
     }
+    const showHistoryBtn = document.getElementById("show-history-btn");
+    if (showHistoryBtn) {
+      showHistoryBtn.addEventListener("click", () => {
+        window.location.href = "history.html";
+      });
+    }
   }
 
   generateUPC() {
