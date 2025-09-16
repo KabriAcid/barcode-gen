@@ -1,0 +1,23 @@
+{
+  "name": "barcode-generator-app",
+  "version": "1.0.0",
+  "description": "Mobile-first barcode generator web application",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server",
+    "build:css": "tailwindcss -i ./src/input.css -o ./style.css --watch",
+    "build": "tailwindcss -i ./src/input.css -o ./style.css"
+  },
+  "dependencies": {
+    "jsbarcode": "^3.11.5"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16",
+    "live-server": "^1.2.2"
+  },
+  "keywords": ["barcode", "generator", "mobile", "tailwind"],
+  "author": "",
+  "license": "MIT"
+}
