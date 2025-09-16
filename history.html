@@ -151,9 +151,15 @@
                 <td class="px-4 py-3 border-r border-gray-200 text-xs text-gray-500 whitespace-nowrap" style="border-right: 1px solid #e5e7eb;">${
                   item.copies
                 }</td>
-                <td class="px-4 py-3 border-r border-gray-200 text-xs text-gray-400 whitespace-nowrap" style="border-right: 1px solid #e5e7eb;">${new Date(
-                  item.timestamp
-                ).toLocaleDateString()}</td>
+                <td class="px-4 py-3 border-r border-gray-200 text-xs text-gray-400 whitespace-nowrap" style="border-right: 1px solid #e5e7eb;">
+                  ${(() => {
+                    const d = new Date(item.timestamp);
+                    return `${d.toLocaleDateString()} ${d.toLocaleTimeString(
+                      [],
+                      { hour: "2-digit", minute: "2-digit", second: "2-digit" }
+                    )}`;
+                  })()}
+                </td>
                 <td class="px-4 py-3 whitespace-nowrap"><button class="btn-secondary text-xs px-3 py-2 w-full" onclick="reprintBarcode('${
                   item.value
                 }')">Reprint</button></td>
