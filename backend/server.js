@@ -60,6 +60,20 @@ app.post("/api/login", (req, res) => {
   );
 });
 
+// --- User Endpoint ---
+app.get("/api/user", (req, res) => {
+  const userId = req.query.userId;
+  if (!userId) return res.status(400).json({ error: "Missing userId" });
+  db.get(
+    "SELECT id, username, phone FROM users WHERE id = ?",
+    [userId],
+    (err, row) => {
+      if (err || !row) return res.status(404).json({ error: "User not found" });
+      res.json(row);
+    }
+  );
+});
+
 // --- History Endpoints ---
 app.get("/api/history", (req, res) => {
   const userId = req.query.userId;

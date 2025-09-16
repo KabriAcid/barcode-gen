@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+    <link href="./style.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto max-w-md py-8">
+      <header class="mb-8 text-center">
+        <h1 class="text-2xl font-bold text-gray-800">Profile</h1>
+      </header>
+      <form
+        id="profile-form"
+        class="bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4"
+      >
+        <div>
+          <label class="block text-sm font-semibold mb-1" for="profile-name"
+            >Name</label
+          >
+          <input id="profile-name" type="text" class="form-input" />
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1" for="profile-phone"
+            >Phone</label
+          >
+          <input id="profile-phone" type="text" class="form-input" />
+        </div>
+        <div>
+          <label
+            class="block text-sm font-semibold mb-1"
+            for="default-label-size"
+            >Default Label Size</label
+          >
+          <select id="default-label-size" class="form-select">
+            <option value="30mm">30mm</option>
+            <option value="40mm">40mm</option>
+            <option value="50mm">50mm</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold mb-1" for="default-copies"
+            >Default Copies</label
+          >
+          <input id="default-copies" type="number" min="1" class="form-input" />
+        </div>
+        <button type="submit" class="btn-primary">Save Settings</button>
+        <button type="button" id="logout-btn" class="btn-secondary mt-2">
+          Logout
+        </button>
+      </form>
+    </div>
+    <div id="profile-feedback" class="text-center text-green-600 mt-4 hidden">
+      Settings saved!
+    </div>
+    <script src="profile.js"></script>
+    <script src="bottom-nav.js"></script>
+  </body>
+</html>
