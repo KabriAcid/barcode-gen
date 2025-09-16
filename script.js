@@ -315,23 +315,23 @@ class BarcodeGenerator {
     historyList.innerHTML = this.history
       .map(
         (item) => `
-            <div class="barcode-item">
-                <div class="flex-1">
-                    <div class="font-mono text-sm font-semibold">${
-                      item.value
-                    }</div>
-                    <div class="text-xs text-gray-500">${item.type} • ${
+      <div class="barcode-item flex flex-wrap items-center justify-between gap-4 p-4">
+        <div class="flex-1 min-w-0">
+          <div class="font-mono text-base md:text-lg font-semibold break-all">${
+            item.value
+          }</div>
+          <div class="text-xs md:text-sm text-gray-500">${item.type} • ${
           item.labelSize
         } • ${item.copies} copies</div>
-                    <div class="text-xs text-gray-400">${new Date(
-                      item.timestamp
-                    ).toLocaleDateString()}</div>
-                </div>
-                <button onclick="app.reprintBarcode(${
-                  item.id
-                })" class="btn-secondary text-sm px-4 py-2">Reprint</button>
-            </div>
-        `
+          <div class="text-xs text-gray-400">${new Date(
+            item.timestamp
+          ).toLocaleDateString()}</div>
+        </div>
+        <button onclick="app.reprintBarcode(${
+          item.id
+        })" class="btn-secondary text-xs md:text-sm px-3 md:px-4 py-2 w-full md:w-auto">Reprint</button>
+      </div>
+    `
       )
       .join("");
   }
