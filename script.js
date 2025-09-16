@@ -10,6 +10,13 @@ class BarcodeGenerator {
   }
 
   initializeEventListeners() {
+    // History search listener
+    const searchInput = document.getElementById("history-search");
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        this.updateHistoryDisplay(e.target.value);
+      });
+    }
     // Step 1 listeners
     document
       .getElementById("create-barcode-btn")
@@ -146,13 +153,14 @@ class BarcodeGenerator {
   goToPreview() {
     const value = document.getElementById("barcode-input").value.trim();
     const type = document.getElementById("barcode-type").value;
+    const name = document.getElementById("barcode-name-input").value.trim();
     if (!value) return;
     this.currentBarcode = {
       value: value,
       type: type,
-      timestamp: new Date().toISOString(),
       labelSize: document.getElementById("label-size").value,
       copies: parseInt(document.getElementById("copies-input").value),
+      name: name,
     };
     this.generateBarcodeImage();
     this.goToStep(2);
@@ -315,7 +323,22 @@ class BarcodeGenerator {
     historyList.classList.remove("hidden");
     emptyHistory.classList.add("hidden");
 
-    historyList.innerHTML = this.history
+    // Accept optional search query
+    let searchQuery = "";
+    if (arguments.length > 0 && typeof arguments[0] === "string") {
+      searchQuery = arguments[0].toLowerCase();
+    }
+
+    const filteredHistory = this.history.filter((item) => {
+      if (!searchQuery) return true;
+      return (
+        (item.name && item.name.toLowerCase().includes(searchQuery)) ||
+        item.value.toLowerCase().includes(searchQuery) ||
+        item.type.toLowerCase().includes(searchQuery)
+      );
+    });
+
+    historyList.innerHTML = filteredHistory
       .map((item) => {
         // Generate a temporary canvas for rendering barcode image
         const tempCanvas = document.createElement("canvas");
@@ -324,7 +347,7 @@ class BarcodeGenerator {
             format: item.type,
             width: 2,
             height: 80,
-            displayValue: false, // we’ll show value separately
+            displayValue: false,
             margin: 0,
           });
         } catch (e) {
@@ -334,28 +357,35 @@ class BarcodeGenerator {
         const barcodeImage = tempCanvas.toDataURL();
 
         return `
-        <div class="barcode-item p-4 border-b border-gray-200">
-         <div class="flex justify-between items-start">
-          <div class="flex flex-col items-center">
-                    <!-- Barcode Image -->
-          <img src="${barcodeImage}" alt="Barcode" class="mb-2" />
-
-          <!-- Value beneath -->
-          <div class="font-mono text-sm md:text-base mb-2">${item.value}</div>
-        </div>
-
-          <!-- Reprint button beside -->
-          <div class="flex justify-center">
-            <button 
-              onclick="app.reprintBarcode(${item.id})" 
-              class="btn-secondary text-xs md:text-sm px-3 py-1"
-            >
-              Reprint
-            </button>
+          <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center gap-4">
+              <img src="${barcodeImage}" alt="Barcode" class="h-16 w-auto" />
+              <div class="flex flex-col flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-base md:text-lg font-semibold break-all text-gray-800">${
+                    item.value
+                  }</span>
+                  ${
+                    item.name
+                      ? `<span class="text-sm font-semibold text-primary-500">${item.name}</span>`
+                      : ""
+                  }
+                </div>
+                <div class="text-xs md:text-sm text-gray-500">${
+                  item.type
+                } <span class="mx-1">•</span> ${
+          item.labelSize
+        } <span class="mx-1">•</span> ${item.copies} copies</div>
+                <div class="text-xs text-gray-400">${new Date(
+                  item.timestamp
+                ).toLocaleDateString()}</div>
+              </div>
+              <button onclick="app.reprintBarcode(${
+                item.id
+              })" class="btn-secondary text-xs md:text-sm px-3 py-2 ml-2">Reprint</button>
+            </div>
           </div>
-         </div>
-        </div>
-      `;
+        `;
       })
       .join("");
   }
