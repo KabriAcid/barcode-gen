@@ -6,23 +6,38 @@ class BarcodeGenerator {
   }
 
   initializeEventListeners() {
+    const nameInput = document.getElementById("barcode-name-input");
     const generateBtn = document.getElementById("generate-random-btn");
+    if (nameInput && generateBtn) {
+      nameInput.addEventListener("input", () => {
+        generateBtn.disabled = nameInput.value.trim() === "";
+      });
+    }
     if (generateBtn) {
       generateBtn.addEventListener("click", async () => {
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = `<svg class='animate-spin h-5 w-5 mr-2 inline-block text-white' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'><circle class='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' stroke-width='4'></circle><path class='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z'></path></svg> Generating...`;
+        await new Promise((r) => setTimeout(r, 2000));
         const upc = this.generateUPC();
-        const name =
-          document.getElementById("barcode-name-input")?.value?.trim() || "";
+        const name = nameInput.value.trim();
+        const labelSize =
+          document.getElementById("label-size")?.value || "30mm";
+        const copies =
+          parseInt(document.getElementById("copies-input")?.value) || 1;
         this.currentBarcode = {
           value: upc,
           type: "UPC",
-          labelSize: document.getElementById("label-size")?.value || "30mm",
-          copies: parseInt(document.getElementById("copies-input")?.value) || 1,
-          name: name,
+          labelSize,
+          copies,
+          name,
         };
         this.generateBarcodeImage();
-        // Show name in preview
+        // Show name and details in preview
         const nameDisplay = document.getElementById("barcode-name-display");
         if (nameDisplay) nameDisplay.textContent = name;
+        const details = document.getElementById("preview-details");
+        if (details)
+          details.textContent = `Label Size: ${labelSize} • Copies: ${copies}`;
         this.showPreview();
         // Save to DB
         const userId = localStorage.getItem("userId");
@@ -35,8 +50,8 @@ class BarcodeGenerator {
                 userId,
                 value: upc,
                 name,
-                labelSize: this.currentBarcode.labelSize,
-                copies: this.currentBarcode.copies,
+                labelSize,
+                copies,
               }),
             });
             if (res.ok) {
@@ -47,6 +62,20 @@ class BarcodeGenerator {
               }
             }
           } catch {}
+        }
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = `Generate Random Barcode`;
+      });
+    }
+    // Label size change in preview
+    const labelSizeSelect = document.getElementById("label-size");
+    if (labelSizeSelect) {
+      labelSizeSelect.addEventListener("change", () => {
+        if (this.currentBarcode) {
+          this.currentBarcode.labelSize = labelSizeSelect.value;
+          const details = document.getElementById("preview-details");
+          if (details)
+            details.textContent = `Label Size: ${labelSizeSelect.value} • Copies: ${this.currentBarcode.copies}`;
         }
       });
     }
