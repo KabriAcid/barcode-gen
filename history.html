@@ -17,6 +17,10 @@
       referrerpolicy="no-referrer"
     ></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="bottom-nav.js"></script>
+    <script>
+      renderBottomNav("history");
+    </script>
   </head>
   <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto max-w-2xl py-8">
@@ -242,10 +246,6 @@
       document.querySelector("body").style.msOverflowStyle = "none";
 
       fetchHistory();
-    </script>
-    <script src="bottom-nav.js"></script>
-    <script>
-      renderBottomNav("history");
     </script>
   </body>
 </html>
