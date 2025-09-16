@@ -23,10 +23,52 @@
           placeholder="Search by value, name, or label size..."
         />
       </div>
-      <div
-        id="history-list"
-        class="grid grid-cols-1 sm:grid-cols-2 gap-4"
-      ></div>
+      <div class="overflow-x-auto">
+        <table
+          class="min-w-full bg-white rounded-xl shadow border border-gray-300 table-auto"
+        >
+          <thead>
+            <tr class="bg-gray-100">
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b border-gray-300 whitespace-nowrap"
+              >
+                Barcode
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b border-gray-300 whitespace-nowrap"
+              >
+                Value
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b border-gray-300 whitespace-nowrap"
+              >
+                Name
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b border-gray-300 whitespace-nowrap"
+              >
+                Label Size
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b border-gray-300 whitespace-nowrap"
+              >
+                Copies
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b border-gray-300 whitespace-nowrap"
+              >
+                Date
+              </th>
+              <th
+                class="px-4 py-3 text-left text-xs font-semibold text-gray-600 border-b border-gray-300 whitespace-nowrap"
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody id="history-list" class="divide-y divide-gray-200"></tbody>
+        </table>
+      </div>
       <div id="empty-history" class="text-center py-8 text-gray-500 hidden">
         <p>No barcodes found.</p>
       </div>
@@ -65,8 +107,8 @@
           );
         });
         if (filtered.length === 0) {
-          historyList.innerHTML = "";
-          emptyHistory.classList.remove("hidden");
+          historyList.innerHTML = `<tr><td colspan='7' class='text-center py-8 text-gray-500'>No barcodes found.</td></tr>`;
+          emptyHistory.classList.add("hidden");
           return;
         }
         emptyHistory.classList.add("hidden");
@@ -85,26 +127,28 @@
             } catch (e) {}
             const barcodeImage = tempCanvas.toDataURL();
             return `
-          <div class="p-4 bg-white rounded-xl shadow border border-gray-200 flex flex-col items-center">
-            <img src="${barcodeImage}" alt="Barcode" class="h-16 w-auto mb-2" />
-            <div class="font-mono text-base font-semibold text-gray-800 text-center break-all">${
-              item.value
-            }${
-              item.name
-                ? ` <span class='text-sm font-semibold text-primary-500'>${item.name}</span>`
-                : ""
-            }</div>
-            <div class="text-xs text-gray-500 text-center mt-1">${
-              item.labelSize
-            } <span class="mx-1">•</span> ${item.copies} copies</div>
-            <div class="text-xs text-gray-400 text-center mb-2">${new Date(
-              item.timestamp
-            ).toLocaleDateString()}</div>
-            <button class="btn-secondary text-xs px-3 py-2 w-full mt-2" onclick="reprintBarcode('${
-              item.value
-            }')">Reprint</button>
-          </div>
-        `;
+              <tr class="even:bg-gray-50 odd:bg-white border-b border-gray-200">
+                <td class="px-4 py-3 border-r border-gray-200 whitespace-nowrap"><img src="${barcodeImage}" alt="Barcode" class="h-12 w-auto mx-auto" /></td>
+                <td class="px-4 py-3 border-r border-gray-200 font-mono text-sm text-gray-800 whitespace-nowrap">${
+                  item.value
+                }</td>
+                <td class="px-4 py-3 border-r border-gray-200 text-sm text-primary-500 font-semibold whitespace-nowrap">${
+                  item.name || ""
+                }</td>
+                <td class="px-4 py-3 border-r border-gray-200 text-xs text-gray-500 whitespace-nowrap">${
+                  item.labelSize
+                }</td>
+                <td class="px-4 py-3 border-r border-gray-200 text-xs text-gray-500 whitespace-nowrap">${
+                  item.copies
+                }</td>
+                <td class="px-4 py-3 border-r border-gray-200 text-xs text-gray-400 whitespace-nowrap">${new Date(
+                  item.timestamp
+                ).toLocaleDateString()}</td>
+                <td class="px-4 py-3 whitespace-nowrap"><button class="btn-secondary text-xs px-3 py-2 w-full" onclick="reprintBarcode('${
+                  item.value
+                }')">Reprint</button></td>
+              </tr>
+            `;
           })
           .join("");
       }
@@ -143,6 +187,10 @@
         printWindow.document.close();
         printWindow.focus();
       };
+
+      // Hide scrollbars
+      document.querySelector("body").style.scrollbarWidth = "none";
+      document.querySelector("body").style.msOverflowStyle = "none";
 
       fetchHistory();
     </script>

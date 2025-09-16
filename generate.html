@@ -62,15 +62,16 @@
             />
           </div>
 
-          <div class="flex flex-col gap-4">
+          <div class="my-4">
             <button
               id="generate-random-btn"
-              class="btn-primary w-full flex items-center justify-center"
+              class="btn-primary w-full py-3"
               disabled
+              style="margin-bottom: 10px"
             >
               Generate Random Barcode
             </button>
-            <button id="show-history-btn" class="btn-secondary w-full">
+            <button id="show-history-btn" class="btn-secondary w-full py-3">
               Show History
             </button>
           </div>
@@ -114,12 +115,20 @@
             </div>
           </div>
 
-          <div class="flex flex-col gap-4">
-            <button id="print-btn" class="btn-primary w-full">Print</button>
-            <button id="save-btn" class="btn-primary w-full">
-              Save as PNG
-            </button>
-            <button id="back-to-generator-btn" class="btn-secondary w-full">
+          <div class="mt-6">
+            <div class="flex gap-4 mt-6">
+              <button id="print-btn" class="btn-secondary mr-2 px-2 py-1">
+                Print
+              </button>
+              <button id="save-btn" class="btn-primary w-full px-2">
+                Save
+              </button>
+            </div>
+            <button
+              id="back-to-generator-btn"
+              class="text-primary-500 underline w-full py-3 mt-2"
+              style="text-decoration: underline"
+            >
               Back to Generator
             </button>
           </div>
