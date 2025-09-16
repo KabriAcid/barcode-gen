@@ -315,8 +315,8 @@ class BarcodeGenerator {
     historyList.innerHTML = this.history
       .map(
         (item) => `
-      <div class="barcode-item flex flex-wrap items-center justify-between gap-4 p-4">
-        <div class="flex-1 min-w-0">
+      <div class="barcode-item p-4">
+        <div class="flex flex-col gap-1">
           <div class="font-mono text-base md:text-lg font-semibold break-all">${
             item.value
           }</div>
@@ -329,7 +329,8 @@ class BarcodeGenerator {
         </div>
         <button onclick="app.reprintBarcode(${
           item.id
-        })" class="btn-secondary text-xs md:text-sm px-3 md:px-4 py-2 w-full md:w-auto">Reprint</button>
+        })" class="btn-secondary text-xs md:text-sm px-3 md:px-4 py-2 w-full mt-3">Reprint</button>
+        <hr class="mt-4 border-gray-200" />
       </div>
     `
       )
