@@ -1,3 +1,4 @@
+// OOP
 class BarcodeGenerator {
   constructor() {
     this.currentStep = 1;
