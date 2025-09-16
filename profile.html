@@ -8,9 +8,36 @@
   </head>
   <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto max-w-md py-8">
-      <header class="mb-8 text-center">
+          <div class="container mx-auto max-w-2xl py-8">
+      <header
+        class="mb-8 flex justify-between justify-items-center items-center gap-2"
+      >
+        <button
+          type="button"
+          onclick="window.history.back()"
+          class="w-2 h-2"
+          aria-label="Go back"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <span class="sr-only">Back</span>
+        </button>
         <h1 class="text-2xl font-bold text-gray-800">Profile</h1>
+        <span></span>
       </header>
+
       <form
         id="profile-form"
         class="bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-4"
@@ -56,5 +83,8 @@
     </div>
     <script src="profile.js"></script>
     <script src="bottom-nav.js"></script>
+    <script>
+      renderBottomNav("profile");
+    </script>
   </body>
 </html>
