@@ -23,9 +23,12 @@ class BarcodeGenerator {
       generateBtn.addEventListener("click", () => {
         // Only generate UPC code and go to preview
         const upc = this.generateUPC();
-        document.getElementById("barcode-input").value = upc;
-        this.validateBarcodeInput(upc);
-        this.goToPreview();
+        const barcodeInput = document.getElementById("barcode-input");
+        if (barcodeInput) {
+          barcodeInput.value = upc;
+          this.validateBarcodeInput(upc);
+          this.goToPreview();
+        }
       });
     }
     const showHistoryBtn = document.getElementById("show-history-btn");
@@ -35,21 +38,31 @@ class BarcodeGenerator {
       });
     }
     // Step 2 listeners
-    document.getElementById("print-btn").addEventListener("click", () => {
-      this.printBarcode();
-    });
-    document.getElementById("save-btn").addEventListener("click", () => {
-      this.saveBarcode();
-    });
-    document
-      .getElementById("back-to-generator-btn")
-      .addEventListener("click", () => {
+    const printBtn = document.getElementById("print-btn");
+    if (printBtn) {
+      printBtn.addEventListener("click", () => {
+        this.printBarcode();
+      });
+    }
+    const saveBtn = document.getElementById("save-btn");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => {
+        this.saveBarcode();
+      });
+    }
+    const backBtn = document.getElementById("back-to-generator-btn");
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
         this.goToStep(1);
       });
+    }
     // Barcode input listener
-    document.getElementById("barcode-input").addEventListener("input", (e) => {
-      this.validateBarcodeInput(e.target.value);
-    });
+    const barcodeInput = document.getElementById("barcode-input");
+    if (barcodeInput) {
+      barcodeInput.addEventListener("input", (e) => {
+        this.validateBarcodeInput(e.target.value);
+      });
+    }
   }
 
   showBarcodeInput() {
