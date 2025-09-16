@@ -8,18 +8,46 @@ class BarcodeGenerator {
   initializeEventListeners() {
     const generateBtn = document.getElementById("generate-random-btn");
     if (generateBtn) {
-      generateBtn.addEventListener("click", () => {
+      generateBtn.addEventListener("click", async () => {
         const upc = this.generateUPC();
+        const name =
+          document.getElementById("barcode-name-input")?.value?.trim() || "";
         this.currentBarcode = {
           value: upc,
           type: "UPC",
           labelSize: document.getElementById("label-size")?.value || "30mm",
           copies: parseInt(document.getElementById("copies-input")?.value) || 1,
-          name:
-            document.getElementById("barcode-name-input")?.value?.trim() || "",
+          name: name,
         };
         this.generateBarcodeImage();
+        // Show name in preview
+        const nameDisplay = document.getElementById("barcode-name-display");
+        if (nameDisplay) nameDisplay.textContent = name;
         this.showPreview();
+        // Save to DB
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          try {
+            const res = await fetch("/api/history", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId,
+                value: upc,
+                name,
+                labelSize: this.currentBarcode.labelSize,
+                copies: this.currentBarcode.copies,
+              }),
+            });
+            if (res.ok) {
+              const feedback = document.getElementById("save-feedback");
+              if (feedback) {
+                feedback.classList.remove("hidden");
+                setTimeout(() => feedback.classList.add("hidden"), 2000);
+              }
+            }
+          } catch {}
+        }
       });
     }
     const saveBtn = document.getElementById("save-btn");
