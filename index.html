@@ -4,100 +4,85 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Barcode Generator - Login/Register</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.0/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
-        min-height: 100vh;
-      }
-      .tab-active {
-        color: #1e293b;
-        border-color: #3b82f6;
-      }
-      .tab-inactive {
-        color: #64748b;
-        border-color: transparent;
-      }
-      .form-input {
-        width: 100%;
-        border-radius: 0.75rem;
-        border-width: 1px;
-        border-color: #d1d5db;
-        padding: 1rem;
-        font-size: 1.125rem;
-        line-height: 1.75rem;
-        margin-top: 0.25rem;
-      }
-      .form-input:focus {
-        outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 2px #3b82f6;
-      }
-      .btn-primary {
-        width: 100%;
-        border-radius: 0.75rem;
-        background-color: #3b82f6;
-        padding: 1rem 1.5rem;
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #fff;
-        transition: background 0.2s;
-        margin-top: 0.5rem;
-      }
-      .btn-primary:hover {
-        background-color: #2563eb;
-      }
-    </style>
+    <link href="./style.css" rel="stylesheet" />
   </head>
-  <body>
-    <!-- Login/Register Form with Tab Navigation -->
-    <div
-      id="auth-container"
-      class="max-w-md mx-auto mt-16 p-8 bg-white rounded-xl shadow-lg"
-    >
-      <div class="flex justify-center mb-8 gap-4">
-        <button
-          id="tab-login"
-          class="px-4 py-2 font-semibold border-b-2 tab-active"
-        >
-          Login
-        </button>
-        <button
-          id="tab-register"
-          class="px-4 py-2 font-semibold border-b-2 tab-inactive"
-        >
-          Register
-        </button>
+  <body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto max-w-md">
+      <header class="text-center py-6">
+        <h1 class="text-2xl font-bold text-gray-800">Barcode Generator</h1>
+      </header>
+      <div id="auth-container" class="step-card mt-4">
+        <div class="flex justify-center mb-16 gap-0">
+          <button
+            id="tab-login"
+            class="w-1/2 px-4 py-2 font-semibold border-b-2 border-primary-500 btn-secondary tab-header transition-all duration-300"
+          >
+            Login
+          </button>
+          <button
+            id="tab-register"
+            class="w-1/2 px-4 py-2 font-semibold border-b-2 border-transparent btn-secondary tab-header transition-all duration-300"
+          >
+            Register
+          </button>
+        </div>
+        <form id="login-form" class="block transition-all duration-300">
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-3">Username</label>
+            <input
+              type="text"
+              name="username"
+              class="form-input"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-3">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-input"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-primary">Login</button>
+        </form>
+        <form id="register-form" class="hidden transition-all duration-300">
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-3">Username</label>
+            <input
+              type="text"
+              name="username"
+              class="form-input"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-3">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-input"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-3">Phone Number</label>
+            <input
+              type="text"
+              name="phone"
+              class="form-input"
+              placeholder="Enter your phone number"
+              required
+            />
+          </div>
+          <button type="submit" class="btn-primary">Register</button>
+        </form>
       </div>
-      <form id="login-form" class="block">
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-1">Username</label>
-          <input type="text" name="username" class="form-input" required />
-        </div>
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-1">Password</label>
-          <input type="password" name="password" class="form-input" required />
-        </div>
-        <button type="submit" class="btn-primary">Login</button>
-      </form>
-      <form id="register-form" class="hidden">
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-1">Username</label>
-          <input type="text" name="username" class="form-input" required />
-        </div>
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-1">Password</label>
-          <input type="password" name="password" class="form-input" required />
-        </div>
-        <div class="mb-6">
-          <label class="block text-sm font-medium mb-1">Phone Number</label>
-          <input type="text" name="phone" class="form-input" required />
-        </div>
-        <button type="submit" class="btn-primary">Register</button>
-      </form>
     </div>
     <script>
       // Tab navigation logic
@@ -105,23 +90,90 @@
       const tabRegister = document.getElementById("tab-register");
       const loginForm = document.getElementById("login-form");
       const registerForm = document.getElementById("register-form");
+      const tabHeaders = document.querySelectorAll(".tab-header");
+
+      function setActiveTab(tab) {
+        tabHeaders.forEach((btn) => {
+          btn.classList.remove(
+            "border-primary-500",
+            "bg-primary-500",
+            "text-white"
+          );
+          btn.classList.add(
+            "border-transparent",
+            "bg-gray-100",
+            "text-gray-700"
+          );
+        });
+        tab.classList.add("border-primary-500", "bg-primary-500", "text-white");
+        tab.classList.remove(
+          "border-transparent",
+          "bg-gray-100",
+          "text-gray-700"
+        );
+      }
 
       tabLogin.onclick = function () {
-        tabLogin.classList.add("tab-active");
-        tabLogin.classList.remove("tab-inactive");
-        tabRegister.classList.remove("tab-active");
-        tabRegister.classList.add("tab-inactive");
+        setActiveTab(tabLogin);
         loginForm.classList.remove("hidden");
         registerForm.classList.add("hidden");
       };
       tabRegister.onclick = function () {
-        tabRegister.classList.add("tab-active");
-        tabRegister.classList.remove("tab-inactive");
-        tabLogin.classList.remove("tab-active");
-        tabLogin.classList.add("tab-inactive");
+        setActiveTab(tabRegister);
         registerForm.classList.remove("hidden");
         loginForm.classList.add("hidden");
       };
+      // Set initial active tab
+      setActiveTab(tabLogin);
+
+      // --- Register AJAX ---
+      registerForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const username = registerForm.username.value.trim();
+        const password = registerForm.password.value.trim();
+        const phone = registerForm.phone.value.trim();
+        try {
+          const res = await fetch("/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password, phone }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            localStorage.setItem("userId", data.userId);
+            alert("Registration successful! You are now logged in.");
+            // Redirect or show barcode generator UI here
+          } else {
+            alert(data.error || "Registration failed.");
+          }
+        } catch (err) {
+          alert("Registration error. Please try again.");
+        }
+      });
+
+      // --- Login AJAX ---
+      loginForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const username = loginForm.username.value.trim();
+        const password = loginForm.password.value.trim();
+        try {
+          const res = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            localStorage.setItem("userId", data.userId);
+            alert("Login successful!");
+            // Redirect or show barcode generator UI here
+          } else {
+            alert(data.error || "Login failed.");
+          }
+        } catch (err) {
+          alert("Login error. Please try again.");
+        }
+      });
     </script>
   </body>
 </html>

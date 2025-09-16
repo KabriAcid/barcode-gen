@@ -4,14 +4,15 @@
   "description": "Mobile-first barcode generator web application",
   "main": "index.html",
   "scripts": {
-    "start": "node server.js",
+    "start": "node backend/server.js",
     "static": "live-server",
     "build:css": "tailwindcss -i ./src/input.css -o ./style.css --watch",
     "build": "tailwindcss -i ./src/input.css -o ./style.css"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "jsbarcode": "^3.11.5"
+    "jsbarcode": "^3.11.5",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@ljharb/tsconfig": "^0.3.2",
