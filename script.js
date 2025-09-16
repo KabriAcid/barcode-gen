@@ -3,9 +3,10 @@ class BarcodeGenerator {
   constructor() {
     this.currentStep = 1;
     this.currentBarcode = null;
-    this.history = JSON.parse(localStorage.getItem("barcodeHistory") || "[]");
+    this.history = [];
     this.initializeEventListeners();
-    this.updateHistoryDisplay();
+    // Load server history
+    this.fetchHistory();
   }
 
   initializeEventListeners() {
@@ -240,10 +241,40 @@ class BarcodeGenerator {
 
   addToHistory() {
     if (!this.currentBarcode) return;
-    this.history.unshift({ ...this.currentBarcode, id: Date.now() });
-    this.history = this.history.slice(0, 50);
-    localStorage.setItem("barcodeHistory", JSON.stringify(this.history));
+    const newEntry = { ...this.currentBarcode, id: Date.now() };
+    // Optimistic update
+    this.history.unshift(newEntry);
+    this.history = this.history.slice(0, 200);
     this.updateHistoryDisplay();
+    // Persist to server
+    fetch("/api/history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newEntry),
+    }).catch((err) => console.error("Failed to save history entry", err));
+  }
+
+  async fetchHistory() {
+    try {
+      const res = await fetch("/api/history");
+      if (!res.ok) throw new Error("Failed to load history");
+      this.history = await res.json();
+      this.updateHistoryDisplay();
+    } catch (e) {
+      console.warn(
+        "History fetch failed, falling back to localStorage if available.",
+        e
+      );
+      try {
+        const fallback = JSON.parse(
+          localStorage.getItem("barcodeHistory") || "[]"
+        );
+        if (fallback.length) {
+          this.history = fallback;
+          this.updateHistoryDisplay();
+        }
+      } catch {}
+    }
   }
 
   // Allow user to download history as JSON file
