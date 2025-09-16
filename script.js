@@ -18,44 +18,34 @@ class BarcodeGenerator {
       });
     }
     // Step 1 listeners
-    document
-      .getElementById("create-barcode-btn")
-      .addEventListener("click", () => {
-        this.showBarcodeInput();
-      });
-
-    document
-      .getElementById("generate-random-btn")
-      .addEventListener("click", () => {
-        this.generateRandomBarcode();
-      });
-
-    document
-      .getElementById("next-to-preview-btn")
-      .addEventListener("click", () => {
+    const generateBtn = document.getElementById("generate-random-btn");
+    if (generateBtn) {
+      generateBtn.addEventListener("click", () => {
+        // Only generate UPC code and go to preview
+        const upc = this.generateUPC();
+        document.getElementById("barcode-input").value = upc;
+        this.validateBarcodeInput(upc);
         this.goToPreview();
       });
-
+    }
+    const showHistoryBtn = document.getElementById("show-history-btn");
+    if (showHistoryBtn) {
+      showHistoryBtn.addEventListener("click", () => {
+        window.location.href = "history.html";
+      });
+    }
     // Step 2 listeners
     document.getElementById("print-btn").addEventListener("click", () => {
       this.printBarcode();
     });
-
     document.getElementById("save-btn").addEventListener("click", () => {
       this.saveBarcode();
     });
-
     document
       .getElementById("back-to-generator-btn")
       .addEventListener("click", () => {
         this.goToStep(1);
       });
-
-    // Step 3 listeners
-    document.getElementById("new-barcode-btn").addEventListener("click", () => {
-      this.goToStep(1);
-    });
-
     // Barcode input listener
     document.getElementById("barcode-input").addEventListener("input", (e) => {
       this.validateBarcodeInput(e.target.value);
@@ -68,26 +58,11 @@ class BarcodeGenerator {
   }
 
   generateRandomBarcode() {
-    const type = document.getElementById("barcode-type").value;
-    let randomValue;
-
-    switch (type) {
-      case "EAN13":
-        randomValue = this.generateEAN13();
-        break;
-      case "UPC":
-        randomValue = this.generateUPC();
-        break;
-      case "CODE128":
-        randomValue = this.generateCode128();
-        break;
-      default:
-        randomValue = this.generateCode128();
-    }
-
-    document.getElementById("barcode-input").value = randomValue;
+    // Only generate UPC code
+    const upc = this.generateUPC();
+    document.getElementById("barcode-input").value = upc;
     this.showBarcodeInput();
-    this.validateBarcodeInput(randomValue);
+    this.validateBarcodeInput(upc);
   }
 
   generateEAN13() {
@@ -127,19 +102,8 @@ class BarcodeGenerator {
   }
 
   validateBarcodeInput(value) {
-    const type = document.getElementById("barcode-type").value;
-    let isValid = false;
-    switch (type) {
-      case "EAN13":
-        isValid = /^\d{13}$/.test(value);
-        break;
-      case "UPC":
-        isValid = /^\d{12}$/.test(value);
-        break;
-      case "CODE128":
-        isValid = value.length >= 1;
-        break;
-    }
+    // Only validate UPC code
+    let isValid = /^\d{12}$/.test(value);
     const nextBtn = document.getElementById("next-to-preview-btn");
     if (isValid && value.trim()) {
       nextBtn.disabled = false;
@@ -152,12 +116,11 @@ class BarcodeGenerator {
 
   goToPreview() {
     const value = document.getElementById("barcode-input").value.trim();
-    const type = document.getElementById("barcode-type").value;
     const name = document.getElementById("barcode-name-input").value.trim();
     if (!value) return;
     this.currentBarcode = {
       value: value,
-      type: type,
+      type: "UPC",
       labelSize: document.getElementById("label-size").value,
       copies: parseInt(document.getElementById("copies-input").value),
       name: name,
@@ -171,7 +134,7 @@ class BarcodeGenerator {
     const valueDisplay = document.getElementById("barcode-value-display");
     try {
       JsBarcode(canvas, this.currentBarcode.value, {
-        format: this.currentBarcode.type,
+        format: "UPC",
         width: 2,
         height: 100,
         displayValue: true,
@@ -249,11 +212,11 @@ class BarcodeGenerator {
 
   addToHistory() {
     if (!this.currentBarcode) return;
-    const newEntry = { ...this.currentBarcode, id: Date.now() };
+    const userId = localStorage.getItem("userId");
+    const newEntry = { ...this.currentBarcode, id: Date.now(), userId };
     // Optimistic update
     this.history.unshift(newEntry);
     this.history = this.history.slice(0, 200);
-    this.updateHistoryDisplay();
     // Persist to server
     fetch("/api/history", {
       method: "POST",
@@ -264,7 +227,8 @@ class BarcodeGenerator {
 
   async fetchHistory() {
     try {
-      const res = await fetch("/api/history");
+      const userId = localStorage.getItem("userId");
+      const res = await fetch(`/api/history?userId=${userId}`);
       if (!res.ok) throw new Error("Failed to load history");
       this.history = await res.json();
       this.updateHistoryDisplay();
