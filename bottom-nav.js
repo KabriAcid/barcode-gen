@@ -7,7 +7,7 @@ function renderBottomNav(active) {
   const nav = document.createElement("nav");
   nav.id = "bottom-nav";
   nav.className =
-    "fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-2xl bg-white border-t border-gray-200 shadow-lg flex justify-between items-center py-2 px-6 z-50";
+    "fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-2xl bg-white border-t border-gray-200 shadow-lg flex justify-between items-center py-2 px-6 rounded-md z-50";
   nav.style.margin = "0 auto";
   nav.style.paddingLeft = "16px";
   nav.style.paddingRight = "16px";
